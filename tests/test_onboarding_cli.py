@@ -149,7 +149,7 @@ def test_guided_onboarding_happy_path(monkeypatch: pytest.MonkeyPatch, config: G
     result = run_guided_onboarding(
         config=config,
         api=api,
-        send_onboarding=lambda cfg, out: sent.append(cfg.ssid) is None or True,
+        send_onboarding=lambda cfg, out, **_: sent.append(cfg.ssid) is None or True,
         output=output,
         sleep_fn=lambda _seconds: None,
     )
@@ -222,7 +222,7 @@ def test_guided_onboarding_new_vacuum(
     result = run_guided_onboarding(
         config=config,
         api=api,
-        send_onboarding=lambda cfg, out: True,
+        send_onboarding=lambda cfg, out, **_: True,
         output=output,
         sleep_fn=lambda _seconds: None,
     )
@@ -301,7 +301,7 @@ def test_guided_onboarding_handles_extra_cycles(monkeypatch: pytest.MonkeyPatch,
     result = run_guided_onboarding(
         config=config,
         api=api,
-        send_onboarding=lambda cfg, out: not send_count.__setitem__("value", send_count["value"] + 1),
+        send_onboarding=lambda cfg, out, **_: not send_count.__setitem__("value", send_count["value"] + 1),
         output=output,
         sleep_fn=lambda _seconds: None,
     )
@@ -457,7 +457,7 @@ def test_guided_onboarding_timeout_can_retry_without_restart(
     result = run_guided_onboarding(
         config=config,
         api=api,
-        send_onboarding=lambda cfg, out: not send_count.__setitem__("value", send_count["value"] + 1),
+        send_onboarding=lambda cfg, out, **_: not send_count.__setitem__("value", send_count["value"] + 1),
         output=output,
         sleep_fn=lambda _seconds: None,
     )
@@ -517,7 +517,7 @@ def test_guided_onboarding_duplicate_names_still_selects_requested_device(
     result = run_guided_onboarding(
         config=config,
         api=api,
-        send_onboarding=lambda cfg, out: True,
+        send_onboarding=lambda cfg, out, **_: True,
         output=output,
         sleep_fn=lambda _seconds: None,
     )

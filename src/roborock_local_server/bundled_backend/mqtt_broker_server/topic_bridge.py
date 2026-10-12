@@ -189,9 +189,6 @@ class MqttTopicBridge:
             key_models_by_did = {}
 
         inventory_devices = self._load_inventory_devices()
-        if not inventory_devices:
-            self._duid_to_did = {}
-            return
 
         did_counts_by_model: dict[str, int] = {}
         unique_did_by_model: dict[str, str] = {}
@@ -229,6 +226,16 @@ class MqttTopicBridge:
             mapped_did = unique_did_by_model.get(model)
             if mapped_did:
                 fresh_map[duid] = mapped_did
+
+        # DID<->DUID pairs learned during onboarding are authoritative and
+        # disambiguate multiple vacuums of the same model.
+        runtime_credentials = getattr(self._runtime_state, "runtime_credentials", None)
+        if runtime_credentials is not None:
+            for device in runtime_credentials.devices():
+                duid = str(device.get("duid") or "").strip()
+                did = str(device.get("did") or "").strip()
+                if duid and did:
+                    fresh_map[duid] = did
 
         map_changed = fresh_map != self._duid_to_did
         if map_changed:
